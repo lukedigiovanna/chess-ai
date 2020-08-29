@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Chess! </title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+
+    <body>
+        <h1> CHESS </h1>
+        <table>
+            <tr>
+                <td class="info">
+                    <p id="notice"> </p>
+                    <p id="turn"> White's turn </p> 
+                    <p id="score"> White: 0 | Black: 0</p>
+                    <p id="gameScore"> Game Score: 0 </p>
+                    <button id="findBest"> Best Move </button>
+                    Depth: <input type="number" id="depth" value="2"> <br><br>
+                    White Depth: <input type="number" id="whitedepth" value="2"><br>
+                    Black Depth: <input type="number" id="blackdepth" value="2">
+                    <button id="playSelf"> Play Self </button><br><br>
+                    <button id="reset"> Reset Board </button>
+                    <button id="save"> Save Image </button>
+                </td>
+                <td class="canvas">
+                    <canvas id="canvas" width="600" height="600">  Your browser does not support this application </canvas>
+                </td>
+            </tr>
+        </table>
+        <p>
+            <b> How it Works: </b> Game theory is a field of a study that determines what the best move for a particular player
+            in a game is at a given instant. This field has been deeply developed for economics but has broad applications elsewhere.
+            Early in the development of Game Theory a prominent mathemetician, von Neumann, created an algorithm which would consider
+            a game where one player is attempting to maximize the output while the other is attempting to minimize the output.
+            His algorithm would determine the best move for a given player to ensure that the score is either the highest (or lowest),
+            assuming their opponent would make the best decision for what they wanted to accomplish. His algorithm is commonly known as 
+            the minmax (or minimax) algorithm. Chess is such a game where we can apply von Neumann's algorithm. We can assign each piece
+            a value and determine that black pieces are a negative value while white pieces are a positive, with more weight given
+            to more valuable pieces (e.g. queen is 9 while pawn is 1). Then we sum all the pieces on the board, yielding an 
+            initial game score of 0 (all black and white pieces cancel out). In this instance, black is attempting to minimize the score
+            while white is attempting to maximize the score. We can then run through von Neumann's minimax algorithm for every possible
+            move that a player could make and then every move the opponent could make given the initial move and so on for some given
+            search depth. For example, if we gave a depth of 5, then the algorithm would search 5 moves ahead and determine what initial
+            move would result in the highest score (assuming their opponent plays the best move that they could make). This algorithm 
+            seemingly falls a part when the opponent is making moves that are not necessarily good for them. For example, if we set white
+            to have a search depth of 4 while black has a search depth of 1, then black will take whatever piece he could at a given
+            instant (even if that piece they used could easily be taken after). White's attempts to strategize are foiled by the seemingly
+            foolish moves of black. 
+        </p>
+        <script src="script.js"></script>
+    </body>
+</html>
