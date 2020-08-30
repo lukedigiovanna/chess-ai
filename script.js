@@ -388,13 +388,35 @@ function forceMovePiece(board, firstIndex, nextIndex) {
         board[nextIndex] = 14; // white queen
 }
 
+
+var moveHistory = []; // consists of 2 element arrays where the first index indicates the moving piece and the second the target position. the first element indicates the most recent move
 // returns true if the move was successful
 function movePiece(board, firstIndex, nextIndex) {
     if (!validMove(board, firstIndex, nextIndex))
         return false;
     else {
         forceMovePiece(board, firstIndex, nextIndex);
+        // lets only update the movehistory if the board is our game board
+        if (board === gameBoard) {
+            moveHistory.unshift([firstIndex, nextIndex]);
+            if (moveHistory.length > 4)
+                moveHistory.pop();
+            console.log(moveHistory);
+        }
         return true;    
+    }
+}
+
+function isLooping() {
+    if (moveHistory.length < 4)
+        return false;
+    else {
+        // now check if we are looping
+        if (moveHistory[0][0] == moveHistory[2][1] && moveHistory[0][1] == moveHistory[2][0] && moveHistory[1][0] == moveHistory[3][1] && moveHistory[1][1] == moveHistory[3][0]) { // checks most recent move for similarity
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -535,9 +557,9 @@ function minimax(board, isMaximizing, depth, alpha = -99999, beta = 99999, moveT
         var maxIndices = [0];
         for (var i = 0; i < possibleMoves.length; i++) {
             var newBoard = [...board];
-            movePiece(newBoard, possibleMoves[i].move[0], possibleMoves[i].move[1])
-            if (isPlayingSelf && blackDepth < depth)
-                eval = minimax(newBoard, true, depth - 2, alpha, beta, possibleMoves[i].move)[0];
+            forceMovePiece(newBoard, possibleMoves[i].move[0], possibleMoves[i].move[1])
+            if (isPlayingSelf && blackDepth == 1) 
+                eval = minimax(newBoard, false, 1, alpha, beta, possibleMoves[i].move)[0];
             else
                 eval = minimax(newBoard, false, depth - 1, alpha, beta, possibleMoves[i].move)[0];
             if (eval > max) {
@@ -552,17 +574,17 @@ function minimax(board, isMaximizing, depth, alpha = -99999, beta = 99999, moveT
                 break;
         }
 
-        return [max, possibleMoves[maxIndices[Math.floor(Math.random() * maxIndices.length)]].move];
+        let index = 0;
+        if (isLooping() && maxIndices.length > 1)
+            index = maxIndices.length - 1;
+        return [max, possibleMoves[maxIndices[index]].move];
     } else {
         var min = 9999;
         var minIndices = [0];
         for (var i = 0; i < possibleMoves.length; i++) {
             var newBoard = [...board];
-            movePiece(newBoard, possibleMoves[i].move[0], possibleMoves[i].move[1])
-            if (isPlayingSelf && whiteDepth < depth)
-                eval = minimax(newBoard, false, depth - 2, alpha, beta, possibleMoves[i].move)[0];
-            else
-                eval = minimax(newBoard, true, depth - 1, alpha, beta, possibleMoves[i].move)[0];   
+            forceMovePiece(newBoard, possibleMoves[i].move[0], possibleMoves[i].move[1])
+            eval = minimax(newBoard, true, depth - 1, alpha, beta, possibleMoves[i].move)[0];   
             if (eval < min) {
                 min = eval;
                 minIndices = [i];
@@ -574,7 +596,10 @@ function minimax(board, isMaximizing, depth, alpha = -99999, beta = 99999, moveT
             if (beta <= alpha)
                 break;
         }
-        return [min, possibleMoves[minIndices[Math.floor(Math.random() * minIndices.length)]].move];
+        let index = 0;
+        if (isLooping() && minIndices.length > 1)
+            index = minIndices.length - 1;
+        return [min, possibleMoves[minIndices[index]].move];
     }
 }
 
